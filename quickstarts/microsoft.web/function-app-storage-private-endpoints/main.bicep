@@ -340,7 +340,7 @@ resource functionStorageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' =
     publicNetworkAccess: 'Disabled'
     allowBlobPublicAccess: false
     networkAcls: {
-      bypass: 'None'
+      bypass: 'AzureServices'
       defaultAction: 'Deny'
     }
   }
