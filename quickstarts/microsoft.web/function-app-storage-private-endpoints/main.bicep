@@ -337,13 +337,72 @@ resource functionStorageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' =
     name: 'Standard_LRS'
   }
   properties: {
-    publicNetworkAccess: 'Disabled'
-    allowBlobPublicAccess: false
-    networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-    }
-  }
+                "dnsEndpointType": "Standard",
+                "defaultToOAuthAuthentication": false,
+                "publicNetworkAccess": "Enabled",
+                "allowCrossTenantReplication": true,
+                "routingPreference": {
+                    "routingChoice": "MicrosoftRouting",
+                    "publishMicrosoftEndpoints": true,
+                    "publishInternetEndpoints": false
+                },
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": false,
+                "allowSharedKeyAccess": true,
+                "networkAcls": {
+                    "resourceAccessRules": [],
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [
+                        {
+                            "id": "[concat(parameters('virtualNetworks_vnet_iss_dev_externalid'), '/subnets/databricks-private-subnet')]",
+                            "action": "Allow",
+                            "state": "Succeeded"
+                        },
+                        {
+                            "id": "[concat(parameters('virtualNetworks_vnet_iss_dev_externalid'), '/subnets/digital-ships-app')]",
+                            "action": "Allow",
+                            "state": "Succeeded"
+                        },
+                        {
+                            "id": "[concat(parameters('virtualNetworks_vnet_iss_dev_externalid'), '/subnets/ml-private-subnet')]",
+                            "action": "Allow",
+                            "state": "Succeeded"
+                        },
+                        {
+                            "id": "[concat(parameters('virtualNetworks_vnet_iss_dev_externalid'), '/subnets/webapp-beaverlabs')]",
+                            "action": "Allow",
+                            "state": "Succeeded"
+                        }
+                    ],
+                    "ipRules": [
+                        {
+                            "value": "69.172.181.211",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "216.240.126.225",
+                            "action": "Allow"
+                        }
+                    ],
+                    "defaultAction": "Deny"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "requireInfrastructureEncryption": false,
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
 }
 
 resource share 'Microsoft.Storage/storageAccounts/fileServices/shares@2022-05-01' = {
